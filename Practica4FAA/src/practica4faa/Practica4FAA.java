@@ -23,7 +23,7 @@ public class Practica4FAA {
         Evaluation eval;
         
         MultilayerPerceptron perceptron = new MultilayerPerceptron();
-        perceptron.setHiddenLayers("3");                   // Perceptron parameter: nr. of neurons per layer, separated by commas
+        perceptron.setHiddenLayers("0");                   // Perceptron parameter: nr. of neurons per layer, separated by commas
         perceptron.setTrainingTime(500);                   // Nr. epochs
         eval = new Evaluation(data);
         eval.crossValidateModel(perceptron, data, 5, rnd); // 5-fold
