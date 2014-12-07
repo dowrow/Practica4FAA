@@ -5,9 +5,11 @@
  */
 package practica4faa;
 
+import java.io.File;
 import java.util.Random;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
+import weka.core.converters.ArffLoader;
 import weka.core.converters.ConverterUtils;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -18,9 +20,15 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class MainEnsemble {
     public static void main(String[] args) throws Exception {
         Random rnd = new Random(System.currentTimeMillis());
-        DataSource source = new DataSource("data/credit-g.arff");
-        Instances data = source.getDataSet();
-        //Instances data = ConverterUtils.DataSource.read("data/credit-g.arff");
+        ArffLoader loader = new ArffLoader();
+        loader.setFile(new File("data/car.arff"));
+        Instances structure = loader.getStructure();
+        Instances data = loader.getDataSet();
+        structure.setClassIndex(structure.numAttributes() - 1);
+        
+        /*DataSource source = new DataSource("data/balan.arff");
+        Instances data = source.getDataSet();*/
+        //Instances data = ConverterUtils.DataSource.read("data/balan.arff");
         data.setClassIndex(data.numAttributes() - 1);      // The class is the last datum of each line
         data.randomize(rnd);
         
