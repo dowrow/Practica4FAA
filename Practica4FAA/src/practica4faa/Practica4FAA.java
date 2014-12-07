@@ -30,7 +30,8 @@ public class Practica4FAA {
         System.out.println("Perceptron\n----------" + eval.toSummaryString());
         
         IBk knn = new IBk();
-        knn.setKNN(10);                                    // Nr. neighbors
+        //knn.setKNN(10);                                    // Nr. neighbors
+        knn.setKNN(1);                                    // Nr. neighbors
         eval = new Evaluation(data);
         eval.crossValidateModel(knn, data, 5, rnd);        // 5-fold
         System.out.println("Nearest neighbors\n-----------------" + eval.toSummaryString());
