@@ -103,6 +103,10 @@ public class EnsembleClasificador implements Classifier, Serializable {
 
     @Override
     public double[] distributionForInstance(Instance instnc) throws Exception {
+        return this.distributionForInstanceDos(instnc);
+    }
+    
+    public double[] distributionForInstanceUno(Instance instnc) throws Exception{
         double [] prediccion = new double[this.numClases];
         int clase = (int)this.classifyInstance(instnc);
         for(int i = 0; i < this.numClases; i++){
@@ -113,6 +117,34 @@ public class EnsembleClasificador implements Classifier, Serializable {
             }
         }
         return prediccion;
+    }
+    public double[] distributionForInstanceDos(Instance instnc) throws Exception{
+        double [] prediccion = new double[this.numClases];
+        for(int i = 0; i<this.numClases; i++ ){
+            prediccion[i] = 0;
+        }
+        for(Classifier c : this.clasificadores){
+            double [] prClas = c.distributionForInstance(instnc);
+            prediccion = this.sumaVectores(prediccion, prClas);
+        }
+        
+        return this.multiplicaVectorPorCTE(prediccion, 1.0/(double)this.clasificadores.size());
+    }
+    
+    private double[] sumaVectores(double[] v1, double[] v2){
+        double [] v3 = new double[v1.length];
+        for(int i = 0; i < v1.length; i++){
+            v3[i] = v1[i] + v2[i];
+        }
+        return v3;
+    }
+    
+    private double[] multiplicaVectorPorCTE(double[] v1, double cte){
+        double [] v3 = new double[v1.length];
+        for(int i = 0; i < v1.length; i++){
+            v3[i] = v1[i] * cte;
+        }
+        return v3;
     }
 
     @Override
