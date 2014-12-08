@@ -53,7 +53,7 @@ public class EnsembleClasificador implements Classifier, Serializable {
         this.logistic.setMaxIts(500);
         this.logistic.buildClassifier(instances);
         //Perceptron de una sola capa
-        this.perceptron.setHiddenLayers("0");                //sin capas ocultas
+        this.perceptron.setHiddenLayers("10");               //una sola capa oculta
         this.perceptron.setTrainingTime(500);                // Nr. epochs
         this.perceptron.buildClassifier(instances);
         

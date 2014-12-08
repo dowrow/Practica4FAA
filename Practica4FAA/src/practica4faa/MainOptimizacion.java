@@ -13,7 +13,7 @@ import weka.core.converters.ConverterUtils;
  *
  * @author dani
  */
-public class Main {
+public class MainOptimizacion {
     public static void main(String[] args) throws Exception {
         Random rnd = new Random(System.currentTimeMillis());
         Instances data = ConverterUtils.DataSource.read("data/credit-g.arff");
@@ -22,5 +22,8 @@ public class Main {
         
         OptimizadorVecinosProximos optimKNN = new OptimizadorVecinosProximos(data, 5);
         optimKNN.Optimizacion();
+        
+        OptimizadorPerceptron optimPer = new OptimizadorPerceptron(data, 5);
+        optimPer.Optimizacion();
     }
 }

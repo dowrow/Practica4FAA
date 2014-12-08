@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.classifiers.Evaluation;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 
@@ -16,26 +17,25 @@ import weka.core.Instances;
  *
  * @author dani
  */
-public class OptimizadorVecinosProximos {
+public class OptimizadorPerceptron {
     private Instances data;
-    private IBk knn;
     private int nFolds;
     private int nFoldsOptimizacion;
-    private ArrayList<Integer> mejoresK;
-    private int mink;        //valor minimo de k
-    private int maxK;        //valor maximo de k
-    private int incrementoK; //incrementos de k
+    private ArrayList<Integer> mejoresPer;
+    private int minPer;        //valor minimo de numero de neuronas
+    private int maxPer;        //valor maximo de numero de neuronas
+    private int incrementoPer; //incrementos de numero de neuronas
+    private MultilayerPerceptron perceptron;
     
-    
-    public OptimizadorVecinosProximos(Instances data, int nFolds){
+    public OptimizadorPerceptron(Instances data, int nFolds){
         this.data = data;
         this.nFolds = nFolds;
         this.nFoldsOptimizacion = this.nFolds - 1;
-        this.knn = new IBk();
-        this.mejoresK = new ArrayList<>();
-        this.mink = 1;
-        this.maxK = 300;
-        this.incrementoK = 5;
+        this.mejoresPer = new ArrayList<>();
+        this.minPer = 1;
+        this.maxPer = 30;
+        this.incrementoPer = 5;
+        this.perceptron = new MultilayerPerceptron();
     }
     
     public void Optimizacion(){
@@ -45,7 +45,7 @@ public class OptimizadorVecinosProximos {
             Instances test = data.testCV(nFolds, i);
             //ya tenemos las particiones
             //recorremos dentro de test las particiones
-            ArrayList<Integer> mejoresKOptim = new ArrayList<>();
+            ArrayList<Integer> mejoresNPerOptim = new ArrayList<>();
             for(int j = 0; j < this.nFoldsOptimizacion; j++){
                 Instances trainingTraining = training.trainCV(this.nFoldsOptimizacion, j);
                 Instances trainingTest = training.testCV(this.nFoldsOptimizacion, j);
@@ -54,60 +54,52 @@ public class OptimizadorVecinosProximos {
                     //ahora debemos recorrer las particiones con los distintos valores
                     // de K
                     Double minErr = 1.0;
-                    int mejorK = 1;
+                    int mejorNperc = 1;
                     //en este algoritmo el train se puede hacer sin usar k ^^
                     //por lo que entrenamos antes del bucle
-                    this.knn.buildClassifier(trainingTraining);
+                    
                     Evaluation eval = new Evaluation(trainingTraining);
-                    for(int k = this.mink; k < this.maxK; k += this.incrementoK){
-                        if(k%2 == 0){
-                            this.knn.setKNN(k - 1);
-                        }else{
-                            this.knn.setKNN(k);
-                        }
+                    for(int percInLayer = this.minPer; percInLayer< this.maxPer; percInLayer += this.incrementoPer){
+                        this.perceptron.setHiddenLayers(""+percInLayer);
+                        this.perceptron.buildClassifier(trainingTraining);
                         
-                        eval.evaluateModel(this.knn, trainingTest);
+                        eval.evaluateModel(this.perceptron, trainingTest);
                         Double error = eval.errorRate();
                         
                         if(error < minErr){
-                            if(k%2 == 0){
-                                mejorK = k - 1;
-                                minErr = error;
-                            }else{
-                                mejorK = k;
-                                minErr = error;
-                            }
+                            mejorNperc = percInLayer;
+                            minErr = error;
                         }
                     }
                     //System.out.println("K--->"+ mejorK +" Err " + minErr + " Fold "+ i+ "-" + j);
-                    mejoresKOptim.add(mejorK);
+                    mejoresNPerOptim.add(mejorNperc);
                 } catch (Exception ex) {
                     Logger.getLogger(OptimizadorVecinosProximos.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }//fin bucle j
             try {
                 Double minErr = 1.0;
-                int mejorK = 1;
+                int mejorPer = 1;
                 //ahora que tenemos las mejores K vamos a evaluarlas con el conjunto de test
                 //nos quedaremos con la mejor
-                this.knn.buildClassifier(training);
+
                 Evaluation eval = new Evaluation(training);
-                for(Integer k : mejoresKOptim){
-                    this.knn.setKNN(k);
-                    eval.evaluateModel(this.knn, test);
+                for(Integer nper : mejoresNPerOptim){
+                    this.perceptron.setHiddenLayers(""+nper);
+                    this.perceptron.buildClassifier(training);
+                    eval.evaluateModel(this.perceptron, test);
                     Double error = eval.errorRate();
                     if(error < minErr){
-                        mejorK = k;
+                        mejorPer = nper;
                         minErr = error;
                     }
                 }
-                System.out.println("K--->"+ mejorK +" Err " + minErr + " Fold "+ i);
-                this.mejoresK.add(mejorK);
+                System.out.println("Neuronas--->"+ mejorPer +" Err " + minErr + " Fold "+ i);
+                this.mejoresPer.add(mejorPer);
             } catch (Exception ex) {
                 Logger.getLogger(OptimizadorVecinosProximos.class.getName()).log(Level.SEVERE, null, ex);
             }
         }//fin bucle i
-        System.out.println(this.mejoresK);
+        System.out.println(this.mejoresPer);
     }
-    
 }
