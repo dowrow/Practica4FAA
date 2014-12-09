@@ -103,7 +103,7 @@ public class EnsembleClasificador implements Classifier, Serializable {
 
     @Override
     public double[] distributionForInstance(Instance instnc) throws Exception {
-        return this.distributionForInstanceDos(instnc);
+        return this.distributionForInstanceUno(instnc);
     }
     
     public double[] distributionForInstanceUno(Instance instnc) throws Exception{
