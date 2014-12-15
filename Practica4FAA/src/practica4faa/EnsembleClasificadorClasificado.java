@@ -14,6 +14,7 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.lazy.IBk;
+import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.DenseInstance;
@@ -28,6 +29,7 @@ import weka.core.Instances;
 public class EnsembleClasificadorClasificado implements Classifier, Serializable {
     private IBk knn;
     private NaiveBayes nb;
+    //private J48 clasifTotal;
     private MultilayerPerceptron clasifTotal;
     private Logistic logistic;
     private MultilayerPerceptron perceptron;
@@ -124,8 +126,8 @@ public class EnsembleClasificadorClasificado implements Classifier, Serializable
             // add the instance
             isTrainingSet.add(iExample);
         }
-        //Perceptron de una sola capa
-        this.perceptron.setHiddenLayers("10");               //una sola capa oculta
+        //Perceptron sin capa oculta
+        this.perceptron.setHiddenLayers("0");
         this.perceptron.setTrainingTime(500);                // Nr. epochs
         this.clasifTotal.buildClassifier(isTrainingSet);
     }
@@ -163,7 +165,7 @@ public class EnsembleClasificadorClasificado implements Classifier, Serializable
 
     @Override
     public double[] distributionForInstance(Instance instnc) throws Exception {
-        return this.distributionForInstanceUno(instnc);
+        return this.distributionForInstanceTres(instnc);
     }
     
     public double[] distributionForInstanceUno(Instance instnc) throws Exception{

@@ -16,7 +16,7 @@ import weka.core.converters.ConverterUtils;
 public class MainOptimizacion {
     public static void main(String[] args) throws Exception {
         Random rnd = new Random(System.currentTimeMillis());
-        Instances data = ConverterUtils.DataSource.read("data/credit-g.arff");
+        Instances data = ConverterUtils.DataSource.read("data/car.arff");
         data.setClassIndex(data.numAttributes() - 1);      // The class is the last datum of each line
         data.randomize(rnd);
         

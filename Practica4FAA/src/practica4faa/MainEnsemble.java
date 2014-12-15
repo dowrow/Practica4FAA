@@ -21,6 +21,7 @@ public class MainEnsemble {
     public static void main(String[] args) throws Exception {
         Random rnd = new Random(System.currentTimeMillis());
         ArffLoader loader = new ArffLoader();
+        //loader.setFile(new File("data/credit-g.arff"));
         loader.setFile(new File("data/credit-g.arff"));
         Instances structure = loader.getStructure();
         Instances data = loader.getDataSet();
