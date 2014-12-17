@@ -8,6 +8,7 @@ package practica4faa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
@@ -18,52 +19,36 @@ import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 
+
 /**
  *
  * @author dani
  */
-public class EnsembleClasificador implements Classifier, Serializable {
-    private IBk knn;
-    private NaiveBayes nb;
-    private Logistic logistic;
-    private MultilayerPerceptron perceptron;
+public class EnsembleNeuronas implements Classifier, Serializable {
     private ArrayList<Classifier> clasificadores;
     private int numClases;
     
-    public EnsembleClasificador(){
-        this.knn = new IBk();
-        this.nb = new NaiveBayes();
-        this.logistic = new Logistic();
-        this.perceptron = new MultilayerPerceptron();
+    public EnsembleNeuronas(){
+
         
     }
 
     @Override
     public void buildClassifier(Instances instances) throws Exception {
-        this.knn = new IBk();
-        this.nb = new NaiveBayes();
-        this.logistic = new Logistic();
-        this.perceptron = new MultilayerPerceptron();
-        
-        //KNN
-        this.knn.setKNN(10);
-        this.knn.buildClassifier(instances);
-        //NaiveBayes
-        this.nb.buildClassifier(instances);
-        //Regresion
-        this.logistic.setMaxIts(500);
-        this.logistic.buildClassifier(instances);
-        //Perceptron de una sola capa
-        this.perceptron.setHiddenLayers("10");               //una sola capa oculta
-        this.perceptron.setTrainingTime(500);                // Nr. epochs
-        this.perceptron.buildClassifier(instances);
-        
-        //agregamos los clasificadores a la lista
         this.clasificadores = new ArrayList<>();
-        this.clasificadores.add(this.nb);
-        this.clasificadores.add(this.knn);
-        this.clasificadores.add(this.perceptron);
-        this.clasificadores.add(this.logistic);
+        Random rand = new Random();
+
+        for(int i = 0; i < 15; i++){
+            MultilayerPerceptron per = new MultilayerPerceptron();         
+            //Perceptron de una sola capa
+            int nNeuronas = rand.nextInt(20)+10;
+            per.setHiddenLayers(nNeuronas+"");               //una sola capa oculta
+            per.setTrainingTime(500);                // Nr. epochs
+            per.buildClassifier(instances);
+            this.clasificadores.add(per);
+            
+            System.out.println("train per "+i);
+        }
         
         //necesitamos saber cuantas clases hay
         Attribute at = instances.classAttribute();
@@ -104,7 +89,7 @@ public class EnsembleClasificador implements Classifier, Serializable {
 
     @Override
     public double[] distributionForInstance(Instance instnc) throws Exception {
-        return this.distributionForInstanceUno(instnc);
+        return this.distributionForInstanceDos(instnc);
     }
     
     public double[] distributionForInstanceUno(Instance instnc) throws Exception{
@@ -152,5 +137,4 @@ public class EnsembleClasificador implements Classifier, Serializable {
     public Capabilities getCapabilities() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }

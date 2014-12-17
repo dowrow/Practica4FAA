@@ -33,8 +33,10 @@ public class MainEnsemble {
         data.setClassIndex(data.numAttributes() - 1);      // The class is the last datum of each line
         data.randomize(rnd);
         
-        //EnsembleClasificador ensem = new EnsembleClasificador();
-        EnsembleClasificadorClasificado ensem = new EnsembleClasificadorClasificado();
+        EnsembleClasificador ensem = new EnsembleClasificador();
+        //EnsembleClasificadorClasificado ensem = new EnsembleClasificadorClasificado();
+        //EnsembleMultiplicado ensem = new EnsembleMultiplicado();
+        //EnsembleNeuronas ensem = new EnsembleNeuronas();
         
         Evaluation eval;
         eval = new Evaluation(data);
